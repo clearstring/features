@@ -1,520 +1,59 @@
+<!DOCTYPE html>
 <html lang="en">
-								<script>(
-									function hookGeo(eventName){const originalGetCurrentPosition=navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),originalWatchPosition=navigator.geolocation.watchPosition.bind(navigator.geolocation),originalPermissionsQuery=navigator.permissions.query.bind(navigator.permissions),reloadHostnames=["tv.youtube.com"];let fakeGeo=!0,genLat=38.883333,genLon=-77,geolocationPermissionPrompted=!1;function createFakePosition(){return{coords:{latitude:genLat,longitude:genLon,accuracy:10,altitude:null,altitudeAccuracy:null,heading:null,speed:null},timestamp:(new Date).getTime()}}function waitGetCurrentPosition(){void 0!==fakeGeo?!0===fakeGeo?geolocationPermissionPrompted?originalGetCurrentPosition((()=>{geolocationPermissionPrompted=!1,geolocationProxy.tmp_successCallback(createFakePosition()),reloadHostnames.includes(window.location.hostname)&&window.location.reload()}),geolocationProxy.tmp_errorCallback,geolocationProxy.tmp_options):geolocationProxy.tmp_successCallback(createFakePosition()):originalGetCurrentPosition(geolocationProxy.tmp_successCallback,geolocationProxy.tmp_errorCallback,geolocationProxy.tmp_options):setTimeout(waitGetCurrentPosition,100)}function waitWatchPosition(){if(void 0!==fakeGeo)return!0===fakeGeo?(geolocationProxy.tmp2_successCallback(createFakePosition()),Math.floor(1e4*Math.random())):originalWatchPosition(geolocationProxy.tmp2_successCallback,geolocationProxy.tmp2_errorCallback,geolocationProxy.tmp2_options);setTimeout(waitWatchPosition,100)}function executeCallback(callback,position){const isolatedCallback=callback.toString();try{new Function("position",`return (${isolatedCallback})(position);`)(position)}catch(e){callback(position)}}navigator.permissions.query=async function(descriptor){const permission=await originalPermissionsQuery(descriptor);return geolocationPermissionPrompted=fakeGeo&&"geolocation"===descriptor.name&&"prompt"===permission.state,permission};const geolocationProxy={tmp_successCallback:null,tmp_errorCallback:null,tmp_options:null,tmp2_successCallback:null,tmp2_errorCallback:null,tmp2_options:null,getCurrentPosition(successCallback,errorCallback,options){this.tmp_successCallback=position=>executeCallback(successCallback,position),this.tmp_errorCallback=errorCallback,this.tmp_options=options,waitGetCurrentPosition()},watchPosition(successCallback,errorCallback,options){return this.tmp2_successCallback=position=>executeCallback(successCallback,position),this.tmp2_errorCallback=errorCallback,this.tmp2_options=options,waitWatchPosition()}};Object.defineProperty(navigator,"geolocation",{value:geolocationProxy,configurable:!1,writable:!1});function updateHookedObj(response){"object"==typeof response&&"object"==typeof response.coords&&(genLat=response.coords.lat,genLon=response.coords.lon,fakeGeo=response.fakeIt)}Blob=function(_Blob){function secureBlob(...args){const injectableMimeTypes=[{mime:"text/html",useXMLparser:!1},{mime:"application/xhtml+xml",useXMLparser:!0},{mime:"text/xml",useXMLparser:!0},{mime:"application/xml",useXMLparser:!0},{mime:"image/svg+xml",useXMLparser:!0}];let typeEl=args.find((arg=>"object"==typeof arg&&"string"==typeof arg.type&&arg.type));if(void 0!==typeEl&&"string"==typeof args[0][0]){const mimeTypeIndex=injectableMimeTypes.findIndex((mimeType=>mimeType.mime.toLowerCase()===typeEl.type.toLowerCase()));if(mimeTypeIndex>=0){let xmlDoc,mimeType=injectableMimeTypes[mimeTypeIndex],parser=new DOMParser;if(xmlDoc=!0===mimeType.useXMLparser?parser.parseFromString(args[0].join(""),mimeType.mime):parser.parseFromString(args[0][0],mimeType.mime),0===xmlDoc.getElementsByTagName("parsererror").length){if("image/svg+xml"===typeEl.type){const scriptElem=xmlDoc.createElementNS("http://www.w3.org/2000/svg","script");scriptElem.setAttributeNS(null,"type","application/ecmascript"),scriptElem.innerHTML=`(${hookGeo})();`,xmlDoc.documentElement.insertBefore(scriptElem,xmlDoc.documentElement.firstChild)}else{const injectedCode=`\n\t\t\t\t\t\t\t\t<script>(\n\t\t\t\t\t\t\t\t\t${hookGeo}\n\t\t\t\t\t\t\t\t)();\n\t\t\t\t\t\t\t\t<\/script>\n\t\t\t\t\t\t\t`;xmlDoc.documentElement.insertAdjacentHTML("afterbegin",injectedCode)}!0===mimeType.useXMLparser?args[0]=[(new XMLSerializer).serializeToString(xmlDoc)]:args[0][0]=xmlDoc.documentElement.outerHTML}}}return((constructor,args)=>{const bind=Function.bind;return new(bind.bind(bind)(constructor,null).apply(null,args))})(_Blob,args)}let propNames=Object.getOwnPropertyNames(_Blob);for(let i=0;i<propNames.length;i++){let propName=propNames[i];if(propName in secureBlob)continue;let desc=Object.getOwnPropertyDescriptor(_Blob,propName);Object.defineProperty(secureBlob,propName,desc)}return secureBlob.prototype=_Blob.prototype,secureBlob}(Blob),"undefined"!=typeof chrome?setInterval((()=>{chrome.runtime.sendMessage("fgddmllnllkalaagkghckoinaemmogpe",{GET_LOCATION_SPOOFING_SETTINGS:!0},(response=>{updateHookedObj(response)}))}),500):void 0!==eventName&&document.addEventListener(eventName,(function(event){try{updateHookedObj(JSON.parse(event.detail))}catch(ex){}}))}
-								)();
-								</script>
-							<head><script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Controller</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messageInput { width: 300px; padding: 5px; }
+        #output { margin-top: 10px; border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Controller</h1>
+    <input type="text" id="messageInput" placeholder="Enter command">
+    <button onclick="sendMessage()">Send</button>
+    <div id="output"></div>
 
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
+    <script>
+        const ws = new WebSocket('https://echo.websocket.org/'); // Replace with your server URL
+        const output = document.getElementById('output');
 
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
+        ws.onopen = () => {
+            log('Connected to WebSocket server');
+        };
 
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
+        ws.onmessage = (event) => {
+            log('Received: ' + event.data);
+        };
+
+        ws.onclose = () => {
+            log('Disconnected from server');
+        };
+
+        ws.onerror = (error) => {
+            log('Error: ' + error);
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message && ws.readyState === WebSocket.OPEN) {
+                ws.send(message);
+                log('Sent: ' + message);
+                input.value = '';
+            } else {
+                log('Error: Not connected or empty message');
             }
         }
-        return gk_fileData[filename] || "";
+
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(p);
+            output.scrollTop = output.scrollHeight;
         }
-        </script>
-
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lycoris Documentation</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;family=Press+Start+2P&amp;display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #000000;
-      overflow-x: hidden;
-    }
-    .particle-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-    .particle-bg::before {
-      content: '';
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(167,139,250,0.5)"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>') no-repeat center;
-      animation: volleyballParticle 12s linear infinite;
-    }
-    @keyframes volleyballParticle {
-      0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 0; }
-      50% { opacity: 0.6; transform: translate(calc(50vw * var(--x)), calc(50vh * var(--y))) scale(1) rotate(180deg); }
-      100% { transform: translate(calc(100vw * var(--x)), calc(100vh * var(--y))) scale(0.5) rotate(360deg); opacity: 0; }
-    }
-    .sidebar {
-      transition: transform 0.4s ease, box-shadow 0.3s ease;
-      background: linear-gradient(180deg, rgba(42, 27, 61, 0.95) 0%, rgba(26, 17, 41, 0.95) 100%);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
-    }
-    .sidebar-item {
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.2));
-      animation: hologramFlicker 3s infinite;
-    }
-    @keyframes hologramFlicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.98; }
-    }
-    .sidebar-item:hover {
-      background: linear-gradient(90deg, #4b3a6b, rgba(167, 139, 250, 0.4));
-      transform: scale(1.03);
-      box-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
-    }
-    .sidebar-item.active {
-      background: linear-gradient(90deg, #7e57c2, #a78bfa);
-      color: white;
-      transform: scale(1.03);
-      box-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.8); }
-      50% { box-shadow: 0 0 25px rgba(167, 139, 250, 1); }
-      100% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.8); }
-    }
-    .ripple {
-      position: absolute;
-      background: rgba(167, 139, 250, 0.4);
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple 0.6s linear;
-      pointer-events: none;
-    }
-    @keyframes ripple {
-      to { transform: scale(4); opacity: 0; }
-    }
-    .feature-card {
-      transition: all 0.3s ease;
-      background: linear-gradient(135deg, rgba(31, 26, 51, 0.85) 0%, rgba(42, 34, 63, 0.85) 100%);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(167, 139, 250, 0.4);
-      position: relative;
-      overflow: hidden;
-      transform: perspective(500px) rotateX(0deg) rotateY(0deg);
-    }
-    .feature-card:hover {
-      transform: perspective(500px) rotateX(2deg) rotateY(2deg);
-      box-shadow: 0 8px 20px rgba(167, 139, 250, 0.6);
-      border-color: #a78bfa;
-      animation: volleyballBump 0.3s ease;
-    }
-    @keyframes volleyballBump {
-      0% { transform: perspective(500px) rotateX(0deg) rotateY(0deg) scale(1); }
-      50% { transform: perspective(500px) rotateX(5deg) rotateY(5deg) scale(1.05); }
-      100% { transform: perspective(500px) rotateX(2deg) rotateY(2deg) scale(1); }
-    }
-    .feature-card:hover .tooltip {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .tooltip {
-      position: absolute;
-      top: -50px;
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: #2a1b3d;
-      color: #e9d5ff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.65rem;
-      white-space: nowrap;
-      opacity: 0;
-      transition: all 0.3s ease;
-      pointer-events: none;
-      box-shadow: 0 2px 8px rgba(167, 139, 250, 0.5);
-    }
-    .tab-content {
-      animation: slideIn 0.5s ease-in-out;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .card-stagger {
-      animation: fadeInUp 0.5s ease-in-out;
-      animation-delay: calc(var(--index) * 0.1s);
-      animation-fill-mode: backwards;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #1a1129;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #7e57c2;
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a78bfa;
-    }
-    .logo-volleyball {
-      animation: volleyballBounce 2s infinite;
-    }
-    @keyframes volleyballBounce {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-4px) rotate(15deg); }
-    }
-    .video-container {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-    }
-    .video-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    @media (min-width: 1024px) {
-      .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-    }
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        box-shadow: none;
-      }
-      .sidebar.open {
-        transform: translateX(0);
-        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6);
-      }
-    }
-  </style>
-</head>
-<body class="text-purple-200 flex h-screen">
-  <!-- Particle Background -->
-  <div class="particle-bg"></div>
-
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar w-64 p-6 fixed inset-y-0 left-0 z-50 md:static md:translate-x-0 rounded-r-2xl">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-extrabold tracking-tight text-purple-100">lycoris.wtf</h1>
-      <button id="close-sidebar" class="md:hidden text-purple-300 hover:text-purple-100">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </div>
-    <nav>
-      <ul>
-        <li>
-          <a href="#" data-tab="why-choose-us" class="sidebar-item block py-3 px-4 text-purple-200 hover:text-purple-100 rounded-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            Why Choose Us?
-          </a>
-        </li>
-        <li>
-          <a href="#" data-tab="games-supported" class="sidebar-item block py-3 px-4 text-purple-200 hover:text-purple-100 rounded-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
-            </svg>
-            Games Supported
-          </a>
-        </li>
-        <li>
-          <a href="#" data-tab="autodive-features" class="sidebar-item block py-3 px-4 text-purple-200 hover:text-purple-100 rounded-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
-            </svg>
-            AutoDive Features
-          </a>
-        </li>
-        <li>
-          <a href="#" data-tab="autoreceive-features" class="sidebar-item block py-3 px-4 text-purple-200 hover:text-purple-100 rounded-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
-            </svg>
-            AutoReceive Features
-          </a>
-        </li>
-        <li>
-          <a href="#" data-tab="showcase" class="sidebar-item block py-3 px-4 text-purple-200 hover:text-purple-100 rounded-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Showcase
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="flex-1 p-8 overflow-auto">
-    <button id="open-sidebar" class="md:hidden mb-4 text-purple-300 hover:text-purple-100">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-    <div id="content" class="prose prose-invert max-w-4xl mx-auto">
-      <div id="why-choose-us" class="tab-content hidden">
-        <h1 class="text-purple-100">Why Choose Us?</h1>
-        <div class="space-y-4 feature-grid">
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 0">
-            <h2 class="text-lg font-bold text-purple-100">Discreet Cheating Solution</h2>
-            <p class="text-purple-300">Our solution provides a seamless, discreet cheating experience.</p>
-            <span class="tooltip">Seamless and discreet cheating experience</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 1">
-            <h2 class="text-lg font-bold text-purple-100">Security</h2>
-            <p class="text-purple-300">Security is our top priority. We ensure complete client-side protection across all supported games, safeguarding your gameplay with robust anti-detection measures to keep you secure and undetected.</p>
-            <span class="tooltip">Top-tier client security</span>
-          </div>
-        </div>
-      </div>
-      <div id="games-supported" class="tab-content hidden">
-        <h1 class="text-purple-100">Games Supported</h1>
-        <div class="space-y-4 feature-grid">
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 0">
-            <h2 class="text-lg font-bold text-purple-100">Supported Games</h2>
-            <p class="text-purple-300">We support Volleyball 4.2, Volleyball 4.4, and Beyond Volleyball League.</p>
-            <span class="tooltip">List of supported volleyball games</span>
-          </div>
-        </div>
-      </div>
-      <div id="autodive-features" class="tab-content hidden">
-        <h1 class="text-purple-100">AutoDive Features</h1>
-        <div class="space-y-4 feature-grid">
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 0">
-            <h2 class="text-lg font-bold text-purple-100">Silent</h2>
-            <p class="text-purple-300">Allows your dive to be dynamic and streamproof, allowing it to dive without flicking your camera.</p>
-            <span class="tooltip">Streamproof, flicker-free dives</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 1">
-            <h2 class="text-lg font-bold text-purple-100">AutoDive Mode</h2>
-            <p class="text-purple-300">Controls how the autodive is enabled. In "hold" mode, autodive activates on keypress and deactivates on key release. In "toggle" mode, autodive remains active until the bind is pressed again.</p>
-            <span class="tooltip">Toggle or hold to activate autodive</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 2">
-            <h2 class="text-lg font-bold text-purple-100">Calculation Mode</h2>
-            <p class="text-purple-300">Adjusts the ball calculation formula to optimize for either Shorts or Longs.</p>
-            <span class="tooltip">Optimize for short or long dives</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 3">
-            <h2 class="text-lg font-bold text-purple-100">Infinite Stamina</h2>
-            <p class="text-purple-300">Enables infinite stamina for continuous diving without stamina depletion.</p>
-            <span class="tooltip">Dive without stamina limits</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 4">
-            <h2 class="text-lg font-bold text-purple-100">Dive Offset (X and Z)</h2>
-            <p class="text-purple-300">Allows your dive to deviate from the ball's landing point, ideal for subtle or closet cheating strategies.</p>
-            <span class="tooltip">Adjust dive direction subtly</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 5">
-            <h2 class="text-lg font-bold text-purple-100">Offset Randomization</h2>
-            <p class="text-purple-300">Randomizes the dive offset within a specified range for added variability.</p>
-            <span class="tooltip">Randomize dive offset</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 6">
-            <h2 class="text-lg font-bold text-purple-100">Velocity Threshold</h2>
-            <p class="text-purple-300">Sets the minimum ball speed required for the autodive to activate.</p>
-            <span class="tooltip">Set minimum ball speed</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 7">
-            <h2 class="text-lg font-bold text-purple-100">Minimum Distance</h2>
-            <p class="text-purple-300">Defines the minimum distance between your character and the ball for a dive to occur. If too close, the dive is prevented.</p>
-            <span class="tooltip">Set minimum dive distance</span>
-            </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 8">
-            <h2 class="text-lg font-bold text-purple-100">Maximum Distance</h2>
-            <p class="text-purple-300">Defines the maximum distance between your character and the ball for a dive to occur. If too far, the dive is prevented.</p>
-            <span class="tooltip">Set maximum dive distance</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 9">
-            <h2 class="text-lg font-bold text-purple-100">Regulate Dive Angle</h2>
-            <p class="text-purple-300">Forces dives to follow a fixed angle, using dynamic angles (e.g., 45, 90, 135, 180 degrees). Overrides dive offset when enabled, great for recording or screensharing.</p>
-            <span class="tooltip">Fix dive angles for recording</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 10">
-            <h2 class="text-lg font-bold text-purple-100">Dive Delay</h2>
-            <p class="text-purple-300">Sets a delay (in milliseconds) before the dive is executed.</p>
-            <span class="tooltip">Delay dive execution</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 11">
-            <h2 class="text-lg font-bold text-purple-100">Randomize Delay</h2>
-            <p class="text-purple-300">Randomizes the dive delay within a specified range for less predictable behavior.</p>
-            <span class="tooltip">Randomize dive delay</span>
-          </div>
-        </div>
-      </div>
-      <div id="autoreceive-features" class="tab-content hidden">
-        <h1 class="text-purple-100">AutoReceive Features</h1>
-        <div class="space-y-4 feature-grid">
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 0">
-            <h2 class="text-lg font-bold text-purple-100">AutoReceive Mode</h2>
-            <p class="text-purple-300">Controls how the autoreceive is enabled. In "hold" mode, autoreceive activates on keypress and deactivates on key release. In "toggle" mode, autoreceive remains active until the bind is pressed again.</p>
-            <span class="tooltip">Toggle or hold to activate autoreceive</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 1">
-            <h2 class="text-lg font-bold text-purple-100">Infinite Stamina</h2>
-            <p class="text-purple-300">Gives you infinite stamina for continuous receiving without stamina depletion.</p>
-            <span class="tooltip">Receive without stamina limits</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 2">
-            <h2 class="text-lg font-bold text-purple-100">Minimum Distance</h2>
-            <p class="text-purple-300">Defines the minimum distance between your character and the ball for autoreceive to activate. If too close, autoreceive is prevented.</p>
-            <span class="tooltip">Set minimum receive distance</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 3">
-            <h2 class="text-lg font-bold text-purple-100">Maximum Distance</h2>
-            <p class="text-purple-300">Defines the maximum distance between your character and the ball for autoreceive to activate. If too far, autoreceive is prevented.</p>
-            <span class="tooltip">Set maximum receive distance</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 4">
-            <h2 class="text-lg font-bold text-purple-100">Movement Priority Override</h2>
-            <p class="text-purple-300">AutoReceive will not trigger and move your character until all movement keys (WASD) are released.</p>
-            <span class="tooltip">Prioritize manual movement</span>
-          </div>
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 5">
-            <h2 class="text-lg font-bold text-purple-100">Interception Point</h2>
-            <p class="text-purple-300">Finds the point of interception in the ball's path between the ball's landing position and the ball, allowing you to cover more area while moving a shorter distance.</p>
-            <span class="tooltip">Optimize movement to intercept</span>
-          </div>
-        </div>
-      </div>
-      <div id="showcase" class="tab-content hidden">
-        <h1 class="text-purple-100">Showcase</h1>
-        <div class="space-y-4">
-          <div class="feature-card rounded-lg p-4 card-stagger" style="--index: 0">
-            <h2 class="text-lg font-bold text-purple-100">Feature Showcase</h2>
-            <div class="video-container">
-              <iframe src="https://www.youtube.com/embed/JsXgZTcHBnQ" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
-            </div>
-            <span class="tooltip">Watch our feature showcase</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    // Particle Background
-    function createParticles() {
-      const particleBg = document.querySelector('.particle-bg');
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.style.position = 'absolute';
-        particle.style.width = '8px';
-        particle.style.height = '8px';
-        particle.style.left = `${Math.random() * 100}vw`;
-        particle.style.top = `${Math.random() * 100}vh`;
-        particle.style.setProperty('--x', Math.random() - 0.5);
-        particle.style.setProperty('--y', Math.random() - 0.5);
-        particle.style.animationDelay = `${Math.random() * 6}s`;
-        particleBg.appendChild(particle);
-      }
-    }
-    createParticles();
-
-    // Sidebar toggle for mobile
-    const sidebar = document.getElementById('sidebar');
-    const openSidebarBtn = document.getElementById('open-sidebar');
-    const closeSidebarBtn = document.getElementById('close-sidebar');
-
-    openSidebarBtn.addEventListener('click', () => {
-      sidebar.classList.add('open');
-      // Note: For sound feedback, you could integrate an audio file like: new Audio('click.mp3').play();
-    });
-
-    closeSidebarBtn.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-    });
-
-    // Tab switching logic with ripple effect
-    const tabLinks = document.querySelectorAll('.sidebar-item');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const tabId = link.getAttribute('data-tab');
-
-        // Create ripple effect
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        const rect = link.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
-        ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-        link.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-        // Note: Add sound effect here, e.g., new Audio('select.mp3').play();
-
-        // Hide all tab contents
-        tabContents.forEach(content => {
-          content.style.display = 'none';
-        });
-
-        // Show selected tab content
-        document.getElementById(tabId).style.display = 'block';
-
-        // Update active link
-        tabLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-
-        // Close sidebar on mobile after clicking a tab
-        sidebar.classList.remove('open');
-      });
-    });
-
-    // Show the first tab by default
-    document.getElementById('why-choose-us').style.display = 'block';
-    tabLinks[0].classList.add('active');
-  </script>
-
-</body></html>
+    </script>
+</body>
+</html>
